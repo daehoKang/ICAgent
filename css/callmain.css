@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f8f8;
+  }
+
+  .top-bar {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-bar .icons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .dialer {
+    display: flex;
+    padding: 10px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .dialer input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .dialer button {
+    background-color: #4c53af;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .controls {
+    display: flex;
+    background: #f1f1f1;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .controls button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background: #ddd;
+    cursor: not-allowed;
+  }
+
+  .tab-menu {
+    display: flex;
+    background: #e6e6e6;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .tab-menu button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #e6e6e6;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .tab-menu .active {
+    background: #ccc;
+  }
+
+  .call-list {
+    background: white;
+    height: 200px;
+    overflow-y: auto;
+  }
+
+  .call-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .status-bar {
+    background: #eeeeee;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }

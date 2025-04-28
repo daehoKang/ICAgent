@@ -1,0 +1,889 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
+  font-family: 'Helvetica Neue', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  position: relative;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-logo img {
+  max-width: 180px;
+  height: auto;
+  opacity: 0;
+  animation: fadeInLogo 0.6s ease-out forwards;
+}
+
+@keyframes fadeInLogo {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ⚙️ 설정 아이콘 */
+.settings-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.settings-icon:hover {
+  transform: rotate(30deg);
+}
+
+.gear {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #bbb;
+  box-shadow: inset 0 0 0 4px #f9f9f9;
+}
+
+.gear::before,
+.gear::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-conic-gradient(#bbb 0deg 10deg, transparent 10deg 30deg);
+  border-radius: 50%;
+  mask-image: radial-gradient(circle, black 40%, transparent 41%);
+}
+
+.gear::after {
+  transform: rotate(15deg);
+}
+
+/* 환경설정 팝업 */
+.settings-popup {
+  position: fixed; /* 화면 중앙에 고정 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff; /* 흰색 배경 */
+  padding: 20px; /* 내부 여백 */
+  border: 1px solid #ddd; /* 연한 테두리 */
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  width: 350px; /* 팝업 너비 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+  display: none; /* 기본적으로 숨김 */
+  font-family: 'Roboto', Arial, sans-serif; /* 세련된 폰트 */
+}
+
+.settings-popup.active {
+  display: block; /* 활성화 시 표시 */
+}
+
+.settings-popup h4 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
+  color: #4a90e2; /* 파란색 */
+}
+
+.settings-popup .popup-grid {
+  display: flex;
+  flex-direction: column; /* 수직 정렬 */
+  gap: 1rem; /* 필드 간 간격 */
+}
+
+.settings-popup .form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.settings-popup .form-item label {
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 0.1rem;
+}
+
+.settings-popup .form-item input {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.settings-popup .form-item input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.settings-popup .popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.settings-popup .popup-buttons .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.settings-popup .popup-buttons .btn.save {
+  background-color: #4a90e2; /* 파란색 */
+  color: white;
+}
+
+.settings-popup .popup-buttons .btn.save:hover {
+  background-color: #3b79cb; /* 더 어두운 파란색 */
+}
+
+.settings-popup .popup-buttons .btn.close {
+  background-color: #e0e0e0; /* 회색 */
+  color: #555;
+}
+
+.settings-popup .popup-buttons .btn.close:hover {
+  background-color: #cfcfcf; /* 더 어두운 회색 */
+}
+
+/* 팝업 그리드 */
+.popup-grid {
+  display: flex;
+  flex-direction: column;  /* 수직 정렬 */
+  gap: 1rem;                /* 필드 사이 간격 */
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-item label {
+  font-size: 0.8rem;
+  color: #444;
+  margin-bottom: 0.1rem;
+  white-space: nowrap;
+}
+
+.form-item input {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.form-item input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+/* 팝업 버튼 */
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.popup-buttons .btn {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.popup-buttons .btn.save {
+  background-color: #a8e6a2;
+  color: #2c702c;
+}
+
+.popup-buttons .btn.save:hover {
+  background-color: #8edc8a;
+}
+
+.popup-buttons .btn.close {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.popup-buttons .btn.close:hover {
+  background-color: #cfcfcf;
+}
+
+/* 로그인 폼 */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.login-btn:hover {
+  background-color: #3b79cb;
+}
+
+.settings-popup {
+  display: none;
+  /* 기타 스타일 */
+}
+
+.settings-popup.active {
+  display: block;
+  /* 기타 스타일 */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f8f8f8;
+}
+
+.top-bar {
+  background-color: #4a90e2;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-bar .icons {
+  display: flex;
+  gap: 10px;
+}
+
+.dialer {
+  display: flex;
+  padding: 10px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  transition: height 0.3s ease, opacity 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.dialer.hidden {
+  height: 0; /* 높이를 0으로 설정 */
+  opacity: 0; /* 투명하게 처리 */
+  overflow: hidden; /* 내용 숨김 */
+  margin: 0; /* 숨김 상태일 때 간격 제거 */
+  padding: 0; /* 숨김 상태일 때 내부 여백 제거 */
+  border: none; /* 숨김 상태일 때 테두리 제거 */
+}
+
+.dialer input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+}
+
+.dialer button {
+  background-color: #4c53af;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.controls {
+  display: flex;
+  background: #f1f1f1;
+  padding: 10px;
+  gap: 5px;
+  background-color: #ffffff;
+  margin-top: 3px;
+}
+
+.controls button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background: #ddd;
+  cursor: not-allowed;
+}
+
+.controls-state {
+  display: flex;
+  background: #f1f1f1;
+  padding: 10px;
+  gap: 5px;
+  background-color: #ffffff;
+  margin-top: 3px;
+}
+
+.controls-state button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background: #ddd;
+  cursor: not-allowed;
+}
+
+.tab-menu {
+  display: flex;
+  background: #e6e6e6;
+  border-bottom: 1px solid #ccc;
+}
+
+.tab-menu button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: #e6e6e6;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tab-menu .active {
+  background: #ccc;
+}
+
+.call-list {
+  background: white;
+  height: 200px;
+  overflow-y: auto;
+}
+
+.call-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.status-bar {
+  background: #eeeeee;
+  padding: 10px;
+  text-align: left; /* 텍스트는 왼쪽 정렬 */
+  font-weight: bold;
+  margin-bottom: 20px;
+  position: relative; /* 버튼 위치를 조정하기 위해 relative 설정 */
+}
+
+.status-bar .clear-logs-btn {
+  position: absolute; /* 버튼을 우측 상단에 배치 */
+  right: 10px; /* 우측 여백 */
+  top: 50%; /* 수직 가운데 정렬 */
+  transform: translateY(-50%); /* 수직 가운데 정렬 보정 */
+  background: #dc3545; /* 빨간색 배경 */
+  color: #ffffff; /* 흰색 텍스트 */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.status-bar .clear-logs-btn:hover {
+  background: #c82333; /* 더 어두운 빨간색 */
+}
+
+.callmain-container {
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #e0e0e0; /* 연한 테두리 */
+  border-radius: 12px; /* 둥근 모서리 */
+  padding: 20px; /* 내부 여백 */
+  font-family: 'Roboto', Arial, sans-serif; /* 세련된 폰트 */
+  color: #333; /* 텍스트 색상 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+}
+
+.callmain-container .top-bar {
+  background-color: #4a90e2; /* 상단 바 파란색 */
+  color: white; /* 텍스트 흰색 */
+  padding: 15px;
+  border-radius: 12px 12px 12px 12px; /* 상단 모서리 둥글게 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.callmain-container .dialer {
+  margin-top: 5px;
+  display: flex;
+  gap: 10px;
+}
+
+.callmain-container .dialer input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* 둥근 모서리 */
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.callmain-container .dialer input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.callmain-container .dialer button {
+  background-color: #4a90e2; /* 파란색 */
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px; /* 둥근 모서리 */
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* 버튼이 disabled 상태일 때 */
+.callmain-container .dialer button:disabled {
+  background-color: #dc3545; /* 빨간색 배경 */
+  color: #ffffff; /* 흰색 텍스트 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+  transform: none; /* -2px 이동 효과 제거 */
+  pointer-events: none; /* hover 효과 비활성화 */
+}
+
+.callmain-container .dialer button:hover {
+  background-color: #3b79cb; /* 약간 어두운 파란색 */
+  transform: translateY(-2px);
+}
+
+.callmain-container .controls.hidden {
+  display: none;
+}
+
+.callmain-container .controls_2.hidden {
+  display: none;
+}
+
+.callmain-container .controls {
+  display: flex;
+  gap: 5px;
+  
+}
+
+.callmain-container .controls button {
+  color: #4a90e2; /* 파란색 */
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #ffffff; /* 흰색 배경 */
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.callmain-container .controls button:hover {
+  transform: translateY(-2px);
+  background-color: #e0e0e0; /* 연한 회색 */
+}
+
+.callmain-container .controls button:disabled {
+  color: #999; /* 회색 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+  transform: none; /* -2px 이동 효과 제거 */
+  pointer-events: none; /* hover 효과 비활성화 */
+}
+
+.callmain-container .controls button.active {
+  background-color: #4a90e2; /* 파란색 */
+  color: white;
+}
+
+.callmain-container .controls-state button {
+  color: #4a90e2; /* 파란색 */
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #ffffff; /* 흰색 배경 */
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.callmain-container .controls-state button:hover {
+  transform: translateY(-2px);
+  background-color: #e0e0e0; /* 연한 회색 */
+}
+
+.callmain-container .controls-state button.active {
+  background-color: #4a90e2; /* 파란색 */
+  color: white;
+}
+.callmain-container .controls-state button:disabled {
+  color: #999; /* 회색 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+  transform: none; /* -2px 이동 효과 제거 */
+  pointer-events: none; /* hover 효과 비활성화 */
+}
+
+.callmain-container .controls_2{
+  margin-top : 10px;
+  text-align: center;
+}
+
+.callmain-container .controls_2 .ClearCall_2{
+  background-color: #dc3545; /* 빨간색 배경 */
+  color: #ffffff; /* 흰색 텍스트 */
+  border: none;
+  border-radius: 5px; /* 둥근 모서리 */
+  padding: 12px 150px; /* 버튼 크기 */
+  font-size: 14px; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵게 */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
+}
+
+.callmain-container .controls_2 .ClearCall_2:hover{
+  background-color: #c82333; /* 더 어두운 빨간색 */
+}
+
+.callmain-container .call-list {
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px; /* 둥근 모서리 */
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.callmain-container .call-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.callmain-container .call-item:last-child {
+  border-bottom: none;
+}
+
+.callmain-container .call-item span:first-child {
+  color: #4a90e2; /* 파란색 */
+  font-weight: bold;
+}
+
+.callmain-container .status-bar {
+  background-color: #ffffff; /* 흰색 배경 */
+  padding: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* 둥근 모서리 */
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #555;
+}
+
+.callmain-container .tab-menu {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.callmain-container .tab-menu button {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #ffffff; /* 흰색 배경 */
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.callmain-container .tab-menu button.active {
+  background-color: #4a90e2; /* 파란색 */
+  color: white;
+}
+
+.callmain-container .tab-menu button:hover {
+  background-color: #e0e0e0; /* 연한 회색 */
+}
+
+/* Popup styles */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  z-index: 1000;
+  display: block; /* 기본적으로 표시 */
+  font-family: 'Arial', sans-serif;
+}
+
+.popup.hidden {
+  display: none; /* hidden 클래스가 있을 때 숨김 */
+}
+
+.popup-header {
+  background: #4a90e2;
+  color: #ffffff;
+  padding: 15px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.popup-body {
+  padding: 20px;
+  font-size: 16px;
+  color: #333333;
+}
+
+.popup-body p {
+  margin: 10px 0;
+}
+
+.popup-body strong {
+  color: #007bff;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: center; /* 버튼들을 가운데 정렬 */
+  gap: 20px; /* 버튼 간 간격 */
+  padding: 15px;
+  background: #f9f9f9;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.popup-footer button {
+  flex: 1; /* 버튼의 가로 길이를 늘림 */
+  max-width: 150px; /* 버튼의 최대 너비 설정 */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+/* Popup 영역의 AnswerCall 버튼 */
+.pop_AnswerCall {
+  background: #28a745; /* 녹색 배경 */
+  color: #ffffff; /* 흰색 텍스트 */
+  border: none;
+}
+
+.pop_AnswerCall:hover {
+  background: #218838; /* 더 어두운 녹색 */
+}
+
+/* Popup 영역의 ClearCall 버튼 */
+.pop_ClearCall {
+  background: #dc3545; /* 빨간색 배경 */
+  color: #ffffff; /* 흰색 텍스트 */
+  border: none;
+}
+
+.pop_ClearCall:hover {
+  background: #c82333; /* 더 어두운 빨간색 */
+}
+
+.call-list .clear-logs-btn {
+  background: #dc3545; /* 빨간색 배경 */
+  color: #ffffff; /* 흰색 텍스트 */
+  border: none;
+  border-radius: 5px; /* 둥근 모서리 */
+  padding: 4px 8px; /* 버튼 크기 조정 */
+  font-size: 12px; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵게 */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 추가 */
+}
+
+.call-list .clear-logs-btn:hover {
+  background: #c82333; /* 더 어두운 빨간색 */
+  transform: translateY(-2px); /* 살짝 위로 이동 */
+}
+
+/* Logout Popup styles */
+.logout-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.logout-popup.hidden {
+  display: none;
+}
+
+.logout-popup .popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.logout-popup .popup-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.logout-popup .popup-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.logout-popup .popup-body {
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.logout-popup .popup-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logout-popup .popup-footer .btn {
+  flex: 1;
+  padding: 10px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-popup .popup-footer .btn.logout {
+  background-color: #dc3545;
+  color: white;
+}
+
+.logout-popup .popup-footer .btn.logout:hover {
+  background-color: #c82333;
+}
+
+.logout-popup .popup-footer .btn.cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.logout-popup .popup-footer .btn.cancel:hover {
+  background-color: #5a6268;
+}
+
+#settingsBtn {
+  background-color: #2f5b9e; /* 파란색 배경 */
+  color: white; /* 흰색 텍스트 */
+  border: none; /* 테두리 제거 */
+  padding: 6px 12px; /* 버튼 크기 조정 */
+  border-radius: 8px; /* 둥근 모서리 */
+  font-size: 12px; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵게 */
+  cursor: pointer; /* 클릭 가능한 커서 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+}
+
+#settingsBtn:hover {
+  background-color: #25497d; /* 더 어두운 파란색 */
+}
