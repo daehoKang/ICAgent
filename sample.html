@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPRON-ICAGENT</title>
+  <link rel="stylesheet" href="./css/sample.css" type="text/css" />
+  <script type="text/javascript" src="js/jquery/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="js/jquery/ipronWS.js"></script>
+  <script type="text/javascript" src="js/jquery/alert.js"></script>
+  <script type="text/javascript" src="js/jquery/event.js"></script>
+  <script type="text/javascript" src="js/jquery/movement.js"></script>
+</head>
+<body>
+  <div class="login-container">
+    <!-- ⚙️ 설정 아이콘 -->
+    <div class="settings-icon" id="settingsPre">
+      <div class="gear"></div>
+    </div>
+
+    <!-- 환경설정 팝업 -->
+    <div class="settings-popup" id="settingsPopup">
+      <h4>⚙️ 환경설정 ⚙️</h4>
+      <div class="popup-grid">
+        <div class="form-item">
+          <label>Server IP1</label>
+          <input type="text" id="InputIp1" placeholder="IP1" value="100.100.107.151"/>
+        </div>
+        <div class="form-item">
+          <label>Server IP2</label>
+          <input type="text" id="InputIp2" placeholder="IP2" value="100.100.107.151"/>
+        </div>
+        <div class="form-item">
+          <label>Port</label>
+          <input type="text" id="InputPort" placeholder="PORT" value="9205"/>
+        </div>
+        <div class="form-item">
+          <label>Prefix</label>
+          <input type="text" id="InputPrefix" placeholder="Prefix" />
+        </div>
+      </div>
+      <div class="popup-buttons">
+        <button class="btn save" value="BtnSave" onclick="return BtnSave_onclick()">저장</button>
+        <button class="btn close" onclick="settingsPopup.classList.remove('active')">닫기</button>
+      </div>
+    </div>
+
+    <!-- 로고 -->
+    <div class="login-logo">
+      <img src="./image/ipron.png" alt="로고" />
+    </div>
+
+    <!-- 로그인 폼 -->
+    <form>
+      <div class="form-group">
+        <input type="text" id="InputuserID" placeholder="아이디" required />
+      </div>
+      <div class="form-group">
+        <input type="password" id="Inputpassword" placeholder="비밀번호" required />
+      </div>
+      <div class="form-group">
+        <input type="text" id="InputDN" placeholder="내선번호" required />
+      </div>
+      <div class="form-group">
+        <input type="text" id="InputTenant" placeholder="테넌트" required />
+      </div>
+      <button type="button" class="login-btn" onclick="BtnLogin_onclick()" disabled>로그인</button>
+    </form>
+  </div>
+
+  <div class="callmain-container" style="display: none;">
+  <div class="top-bar">
+    <div class="user-info">
+      <span id="userID"></span>
+      <span id="DN"></span>
+    </div>
+    <div class="icons">
+      <button type="button" id="settingsBtn" onclick="BtnLogout_onclick()">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="dialer">
+    <input type="text" id="InputDnis"placeholder="전화번호 입력">
+    <button type="button" class="MakeCall-btn" onclick="BtnMakeCall_onclick()">전화 걸기</button>
+  </div>
+
+  <div class="controls-state">
+    <button type="button "class="state" value= 40 onclick="SetAgentState(this.value)">수신대기</button>
+    <button type="button "class="state" value= 60 onclick="SetAgentState(this.value)">후처리</button>
+    <button type="button "class="state" value= 30 onclick="SetAgentState(this.value)">자리비움</button>
+  </div>
+
+  <div class="status-bar">
+    자리비움 (00:03:32)
+  </div>
+
+  <!--<div class="ClearLog-container">
+    <div class="ClearLog">
+      <button type="button" class="clear-logs-btn" onclick="ClearLogs()">지우기</button> 
+    </div> -->
+  <div class="call-list">
+  </div>
+  <div class="controls hidden">
+    <button type="button "class="ClearCall" id="ClearCall" disabled onclick="ClearCall()">통화종료</button>
+    <button type="button "class="HoldCall" disabled onclick="HoldCall()">보류</button>
+    <button type="button "class="RetrieveCall" disabled onclick="RetrieveCall()">보류해제</button>
+  </div>
+  <div class="controls_2 hidden">
+    <button type="button" class="ClearCall_2" id="ClearCall2" onclick="ClearCall()">통화종료</button>
+  </div>
+  <div id="callPopup" class="popup hidden">
+    <div class="popup-header">
+      <h3>📞 전화 알림</h3>
+      <button id="closePopupBtn" class="close-btn">✖</button>
+    </div>
+    <div class="popup-body">
+      <p><strong>전화번호:</strong> <span id="popupPhoneNumber">1234</span></p>
+      <p><strong>시간:</strong> <span id="popupTimer">00:00:00</span></p>
+    </div>
+    <div class="popup-footer">
+      <button type="button" class="pop_AnswerCall" id="pop_AnswerCall">받기</button>
+      <button type="button" class="pop_ClearCall" id="pop_ClearCall">종료</button>
+    </div>
+  </div>
+
+  <!-- 로그아웃 팝업 -->
+  <div class="logout-popup hidden" id="logoutPopup">
+    <div class="popup-header">
+      <h3>로그아웃</h3>
+      <button id="closeLogoutPopupBtn" class="close-btn">✖</button>
+    </div>
+    <div class="popup-body">
+      <p>정말 로그아웃 하시겠습니까?</p>
+    </div>
+    <div class="popup-footer">
+      <button type="button" class="btn logout" onclick="handleLogout()">확인</button>
+      <button type="button" class="btn cancel" onclick="toggleLogoutPopup(false)">취소</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const loginButton = document.querySelector(".login-btn");
+  const inputFields = [
+    document.getElementById("InputuserID"),
+    document.getElementById("Inputpassword"),
+    document.getElementById("InputDN"),
+    document.getElementById("InputTenant"),
+  ];
+
+  // 입력 필드 상태 확인 함수
+  function checkInputs() {
+    const allFilled = inputFields.every((input) => input.value.trim() !== "");
+    loginButton.disabled = !allFilled; // 모든 필드가 채워지지 않으면 버튼 비활성화
+  }
+
+  // 입력 필드에 이벤트 리스너 추가
+  inputFields.forEach((input) => {
+    input.addEventListener("input", checkInputs);
+  });
+
+  // 초기 상태 확인
+  checkInputs();
+});
+</script>
+</body>
+</html>
