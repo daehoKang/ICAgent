@@ -85,9 +85,27 @@
   </div>
 
   <div class="controls-state">
-    <button type="button "class="state" value= 40 onclick="SetAgentState(this.value)">수신대기</button>
-    <button type="button "class="state" value= 60 onclick="SetAgentState(this.value)">후처리</button>
-    <button type="button "class="state" value= 30 onclick="SetAgentState(this.value)">자리비움</button>
+    <button type="button" class="state" value= 40 onclick="SetAgentState(this.value)">수신대기</button>
+    <button type="button" class="state" onclick="SelectState()">후처리</button>
+    <button type="button" class="state" value= 30 onclick="SetAgentState(this.value)">자리비움</button>
+  </div>
+
+  <div id="SelectState_popup" class="popup hidden">
+    <div class="popup-header">
+      <h3>후처리 사유 선택</h3>
+      <button id="closeAfterProcessPopupBtn" class="close-btn">✖</button>
+    </div>
+    <div class="popup-body">
+      <label for="afterProcessReason">후처리 사유:</label>
+      <select id="afterProcessReason">
+        <option value="default">기본</option>
+        <option value="other">기타</option>
+      </select>
+    </div>
+    <div class="popup-footer">
+      <button type="button" id="confirmAfterProcessBtn">확인</button>
+      <button type="button" id="cancelAfterProcessBtn">취소</button>
+    </div>
   </div>
 
   <div class="status-bar">

@@ -426,3 +426,53 @@ $(function () {
         // 로그 추가
         callList.prepend(logItem); // 최신 로그가 위로 오도록 추가
       }
+      
+      function SelectState(){
+        console.log("123123");
+        const callMainContainer = document.querySelector(".callmain-container");
+        const SelectState_popup = document.getElementById("SelectState_popup");
+        const closeAfterProcessPopupBtn = document.getElementById("closeAfterProcessPopupBtn");
+        const confirmAfterProcessBtn = document.getElementById("confirmAfterProcessBtn");
+        const cancelAfterProcessBtn = document.getElementById("cancelAfterProcessBtn");
+      
+        // 팝업 표시
+        if (callMainContainer) {
+          callMainContainer.style.display = "block"; // callmain-container 표시
+        }
+        if (SelectState_popup) {
+          console.log("SelectState_popup 요소 찾음:", SelectState_popup);
+          SelectState_popup.classList.remove("hidden"); // SelectState_popup 표시
+        } else {
+          console.error("SelectState_popup 요소를 찾을 수 없습니다.");
+          return; // 팝업 요소가 없으면 함수 종료
+        }
+      
+        // 팝업 닫기 버튼
+        if (closeAfterProcessPopupBtn) {
+          closeAfterProcessPopupBtn.onclick = function () {
+            afterProcessPopup.classList.add("hidden");
+          };
+        }
+      
+        // 취소 버튼 클릭 시 팝업 닫기
+        if (cancelAfterProcessBtn) {
+          cancelAfterProcessBtn.onclick = function () {
+            afterProcessPopup.classList.add("hidden");
+          };
+        }
+      
+        // 확인 버튼 클릭 시 동작
+        if (confirmAfterProcessBtn) {
+          confirmAfterProcessBtn.onclick = function () {
+            const selectedValue = document.getElementById("afterProcessReason").value;
+            console.log("선택된 후처리 사유:", selectedValue);
+      
+            // SetAgentState 호출
+            SetAgentState(60); // 후처리 상태 값 전달
+      
+            // 팝업 닫기
+            afterProcessPopup.classList.add("hidden");
+          };
+        }
+      }
+      

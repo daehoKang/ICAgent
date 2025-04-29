@@ -139,7 +139,7 @@ function CBFuncResponse(response) {
       }
       break;
       case ipron.APIResponse.CLOSESERVER_RES:
-        if (event.METHOD == ipron.APIEvent.CLOSESERVER_RES) {
+        if (response.METHOD == ipron.APIResponse.CLOSESERVER_RES) {
           console.log("EVENT : CloseServer 성공");
           LogoutSuccess();
         }
@@ -304,8 +304,7 @@ function CBFuncEvent(event) {
           document.querySelector(".controls").classList.add("hidden")
           document.querySelector(".controls_2").classList.add("hidden")
           const callPopup = document.getElementById("callPopup");
-
-          state = 60;
+          state = 60
           SetAgentState(state);
           StateControl(false);
           MakeCallControl(false);
@@ -356,6 +355,37 @@ function CBFuncEvent(event) {
         }
         else {
           console.log("EVENT : 통화 대기 해제 실패");
+        }
+          break;
+      case ipron.APIEvent.AGENTACW:
+        if (event.METHOD == ipron.APIEvent.AGENTACW) {
+          console.log("EVENT : 후처리상태 변경완료");
+        }else{
+          console.log("EVENT : 후처리상태 변경실패");
+        }
+        break;
+      case ipron.APIEvent.BANISHMENT:
+        if (event.METHOD == ipron.APIEvent.BANISHMENT) {
+          console.log("EVENT : 강제 로그아웃 성공");
+          if(event.RESULT == 0){
+            var DestAgentID  = event.DEST_AGENT_ID;
+            var DestDN = event.DEST_DN;
+            console.log(InputDN.value);
+            console.log(InputuserID.value);
+            console.log(DestAgentID);
+            console.log(DestDN);
+            if(DestAgentID == InputuserID.value){
+              alert("아이디 : " +  DestAgentID + "님의 로그인으로인해 로그아웃되었습니다.");
+            }else if(DestDN == InputDN.value){
+              alert("내선번호 : " +  DestDN + "님의 로그인으로인해 로그아웃되었습니다.");
+            }else{
+              alert("동일한 아아디/DN 로그인으로인해 로그아웃되었습니다.");
+            }
+            location.reload();
+          }
+        }
+        else {
+          console.log("EVENT : 강제 로그아웃 실패");
         }
           break;
       default:
