@@ -888,37 +888,235 @@ body {
   background-color: #25497d; /* 더 어두운 파란색 */
 }
 
-#SelectState_popup {
+#SelectState_AcwPopup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
-  padding: 10px;
+  padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   display: none; /* 기본적으로 숨김 */
+  width: 350px; /* 팝업 너비를 줄임 */
+  font-family: 'Roboto', Arial, sans-serif;
 }
 
-#SelectState_popup.hidden {
+#SelectState_AcwPopup.hidden {
   display: none; /* hidden 클래스가 있을 때 숨김 */
 }
 
-#SelectState_popup .popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+#SelectState_AcwPopup:not(.hidden) {
+  display: block; /* hidden 클래스가 없을 때 표시 */
 }
 
-#SelectState_popup .popup-body {
+#SelectState_AcwPopup .popup-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
+#SelectState_AcwPopup .popup-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #2f5b9e;
+  transition: color 0.3s ease;
+}
+
+#SelectState_AcwPopup .popup-header .close-btn:hover {
+  color: #25497d;
+}
+
+#SelectState_AcwPopup .popup-body {
   margin-bottom: 20px;
+  font-size: 1rem;
+  color: #555;
 }
 
-#SelectState_popup .popup-footer {
+#SelectState_AcwPopup .popup-body label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold; /* 글씨를 굵게 */
+  color: #666; /* 회색으로 변경 */
+}
+
+#SelectState_AcwPopup .popup-body select {
+  width: 100%;
+  padding: 12px 10px; /* 위아래 크기를 늘림 */
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #f9f9f9;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+#SelectState_AcwPopup .popup-body select:focus {
+  border-color: #4a90e2; /* 포커스 시 파란색 테두리 */
+  outline: none;
+}
+
+#SelectState_AcwPopup .popup-footer {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+#SelectState_AcwPopup .popup-footer button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#SelectState_AcwPopup .popup-footer #ConfirmBtn_Acw {
+  background-color: #4a90e2;
+  color: white;
+}
+
+#SelectState_AcwPopup .popup-footer #ConfirmBtn_Acw:hover {
+  background-color: #3b79cb;
+}
+
+#SelectState_AcwPopup .popup-footer #CancelBtn_Acw {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+#SelectState_AcwPopup .popup-footer #CancelBtn_Acw:hover {
+  background-color: #cfcfcf;
+}
+
+#SelectState_NotReadyPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none; /* 기본적으로 숨김 */
+  width: 350px; /* 팝업 너비를 줄임 */
+  font-family: 'Roboto', Arial, sans-serif;
+}
+
+#SelectState_NotReadyPopup.hidden {
+  display: none; /* hidden 클래스가 있을 때 숨김 */
+}
+
+#SelectState_NotReadyPopup:not(.hidden) {
+  display: block; /* hidden 클래스가 없을 때 표시 */
+}
+
+#SelectState_NotReadyPopup .popup-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
+#SelectState_NotReadyPopup .popup-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #2f5b9e;
+  transition: color 0.3s ease;
+}
+
+#SelectState_NotReadyPopup .popup-header .close-btn:hover {
+  color: #25497d;
+}
+
+#SelectState_NotReadyPopup .popup-body {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #555;
+}
+
+#SelectState_NotReadyPopup .popup-body label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold; /* 글씨를 굵게 */
+  color: #666; /* 회색으로 변경 */
+}
+
+#SelectState_NotReadyPopup .popup-body select {
+  width: 100%;
+  padding: 12px 10px; /* 위아래 크기를 늘림 */
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #f9f9f9;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+#SelectState_NotReadyPopup .popup-body select:focus {
+  border-color: #4a90e2; /* 포커스 시 파란색 테두리 */
+  outline: none;
+}
+
+#SelectState_NotReadyPopup .popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+#SelectState_NotReadyPopup .popup-footer button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#SelectState_NotReadyPopup .popup-footer #ConfirmBtn_NotReady {
+  background-color: #4a90e2;
+  color: white;
+}
+
+#SelectState_NotReadyPopup .popup-footer #ConfirmBtn_NotReady:hover {
+  background-color: #3b79cb;
+}
+
+#SelectState_NotReadyPopup .popup-footer #CancelBtn_NotReady {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+#SelectState_NotReadyPopup .popup-footer #CancelBtn_NotReady:hover {
+  background-color: #cfcfcf;
+}
+
+.remember-Info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.remember-Info input[type="checkbox"] {
+  margin-right: 5px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.remember-Info label {
+  cursor: pointer;
 }

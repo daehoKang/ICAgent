@@ -273,7 +273,7 @@ function CBFuncEvent(event) {
           console.log("EVENT : DIALING 성공");
           document.querySelector(".controls_2").classList.remove("hidden") //통화종료 버튼 활성화
           Connection_id = event.CONNECTION_ID;
-              state = 51;
+              state = 52;
               SetAgentState(state);
               StateControl(true);
               CallControl(false);
@@ -332,7 +332,7 @@ function CBFuncEvent(event) {
           const ANI = event.ANI;
           Connection_id = event.CONNECTION_ID;
           showCallPopup(ANI); // 팝업 표시
-          state = 51;
+          state = 53;
           SetAgentState(state);
         }
           break;

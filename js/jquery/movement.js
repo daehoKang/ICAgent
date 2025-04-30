@@ -86,6 +86,43 @@ $(function () {
       }
     
       function BtnLogin_onclick() {
+        const rememberInfo = document.getElementById("rememberInfo").checked;
+        if (rememberInfo) {
+          const userID = document.getElementById("InputuserID").value;
+          const dn = document.getElementById("InputDN").value.trim();
+          const tenant = document.getElementById("InputTenant").value.trim();
+          localStorage.setItem("saveID", userID);
+          localStorage.setItem("saveDN", dn);
+          localStorage.setItem("saveTenant", tenant);
+          console.log("로그인 정보 저장");
+          saveInfo();
+        } else {
+          localStorage.removeItem("saveID");
+          localStorage.removeItem("saveDN");
+          localStorage.removeItem("saveTenant");
+          console.log("로그인 정보 삭제");
+        }
+        OpenServer();
+      }
+
+      function saveInfo(){
+        const saveID = localStorage.getItem("saveID");
+        const saveDN = localStorage.getItem("saveDN");
+        const saveTenant = localStorage.getItem("saveTenant");
+    
+        if (saveID) {
+          document.getElementById("InputuserID").value = saveID;
+        }
+        if(saveDN){
+          document.getElementById("InputDN").value = saveDN;
+        }
+        if(saveTenant){
+          document.getElementById("InputTenant").value = saveTenant;
+        }
+        OpenServer();
+      }
+
+      function OpenServer(){
         // WebSocket URL 생성
         var p1 = GetProtocol() + '://' + InputIp1.value + ':' + InputPort.value + '/wsapi';
         var p2 = GetProtocol() + '://' + InputIp2.value + ':' + InputPort.value + '/wsapi';
@@ -272,6 +309,12 @@ $(function () {
               case 51:
                   statusBar.textContent = "통화중";
                   break;
+              case 52:
+                  statusBar.textContent = "연결중";
+                  break;
+              case 53:
+                  statusBar.textContent = "벨울림";
+                  break;
               case 60:
                   statusBar.textContent = "후처리";
                   break;
@@ -281,19 +324,17 @@ $(function () {
     
           // 상태 변경 시 타이머 초기화 및 시작
           resetTimer(statusBar);
-          if(agentState != agentState_bak){
             addLog(agentState);
-            agentState_bak = agentState;
-          }
       }
     
-      function SetAgentState(value) {
+      function SetAgentState(value, state_sub) {
         agentState = parseInt(value);
     
         const InputuserID = document.getElementById("InputuserID");
         loginData.tenant = document.getElementById("InputTenant").value.trim(); // Tenant 값 설정
     
-        ipron.SetAgentState(
+        if(state_sub == 0){
+          ipron.SetAgentState(
             InputuserID.value, // User ID
             loginData.tenant,  // Tenant
             agentState,        // Agent State
@@ -301,7 +342,16 @@ $(function () {
             loginData.extension,        // Extension
             loginData.mediaset           // Media Set
         );
-    
+        }else{
+          ipron.SetAgentState(
+            InputuserID.value, // User ID
+            loginData.tenant,  // Tenant
+            agentState,        // Agent State
+            state_sub,          // State Sub
+            loginData.extension,        // Extension
+            loginData.mediaset           // Media Set
+          );
+        }
         console.log("상담원 상태 변경:", agentState);
     
         // 상태바 업데이트
@@ -381,7 +431,13 @@ $(function () {
         );
       }
     
+      var LastLog = null;
+
       function addLog(state) {
+        if (state === 51 || state === 52 || state === 53 || (state === 60 && state === LastLog)) {
+          LastLog = null;
+          return;
+        }
         const callList = document.querySelector(".call-list");
         console.log("확인 : ", state)
         // 현재 시간 가져오기
@@ -399,14 +455,11 @@ $(function () {
           case 40 :
             stateText = "수신대기";
             break;
-          case 51 :
-            stateText = "통화중";
-            break;
           case 58 :
-            stateText = "통화대기";
+            stateText = "보류";
             break;
           case 59 :
-            stateText = "통화대기 해제";
+            stateText = "보류해제";
             break;
           case 60 :
             stateText = "후처리";
@@ -425,54 +478,55 @@ $(function () {
     
         // 로그 추가
         callList.prepend(logItem); // 최신 로그가 위로 오도록 추가
+        LastLog = state;
       }
       
-      function SelectState(){
-        console.log("123123");
-        const callMainContainer = document.querySelector(".callmain-container");
-        const SelectState_popup = document.getElementById("SelectState_popup");
-        const closeAfterProcessPopupBtn = document.getElementById("closeAfterProcessPopupBtn");
-        const confirmAfterProcessBtn = document.getElementById("confirmAfterProcessBtn");
-        const cancelAfterProcessBtn = document.getElementById("cancelAfterProcessBtn");
-      
+      function SelectState(state) {
+        if(state == 'ACW'){
+        var SelectState_popup = document.getElementById("SelectState_AcwPopup");
+        var ClosePopupBtn = document.getElementById("ClosePopupBtn_Acw");
+        var ConfirmBtn = document.getElementById("ConfirmBtn_Acw");
+        var CancelBtn = document.getElementById("CancelBtn_Acw");
+        }else if(state == 'NotReady'){
+        var SelectState_popup = document.getElementById("SelectState_NotReadyPopup");
+        var ClosePopupBtn = document.getElementById("ClosePopupBtn_NotReady");
+        var ConfirmBtn = document.getElementById("ConfirmBtn_NotReady");
+        var CancelBtn = document.getElementById("CancelBtn_NotReady");
+        }
+
         // 팝업 표시
-        if (callMainContainer) {
-          callMainContainer.style.display = "block"; // callmain-container 표시
-        }
         if (SelectState_popup) {
-          console.log("SelectState_popup 요소 찾음:", SelectState_popup);
-          SelectState_popup.classList.remove("hidden"); // SelectState_popup 표시
-        } else {
-          console.error("SelectState_popup 요소를 찾을 수 없습니다.");
-          return; // 팝업 요소가 없으면 함수 종료
-        }
-      
+          SelectState_popup.classList.remove("hidden"); // hidden 클래스 제거
+
         // 팝업 닫기 버튼
-        if (closeAfterProcessPopupBtn) {
-          closeAfterProcessPopupBtn.onclick = function () {
-            afterProcessPopup.classList.add("hidden");
+        if (ClosePopupBtn) {
+          ClosePopupBtn.onclick = function () {
+            SelectState_popup.classList.add("hidden");
           };
         }
       
         // 취소 버튼 클릭 시 팝업 닫기
-        if (cancelAfterProcessBtn) {
-          cancelAfterProcessBtn.onclick = function () {
-            afterProcessPopup.classList.add("hidden");
+        if (CancelBtn) {
+          CancelBtn.onclick = function () {
+            SelectState_popup.classList.add("hidden");
           };
         }
       
         // 확인 버튼 클릭 시 동작
-        if (confirmAfterProcessBtn) {
-          confirmAfterProcessBtn.onclick = function () {
-            const selectedValue = document.getElementById("afterProcessReason").value;
-            console.log("선택된 후처리 사유:", selectedValue);
-      
-            // SetAgentState 호출
-            SetAgentState(60); // 후처리 상태 값 전달
-      
+        if (ConfirmBtn) {
+          ConfirmBtn.onclick = function () {        
+            if(state == 'NotReady'){
+              const StateReason = document.querySelector("#SelectState_NotReadyPopup #StateReason");
+              SetAgentState(30, StateReason.value);
+              console.log("sub값 : ", StateReason.value);
+            }else{
+              const StateReason = document.querySelector("#SelectState_AcwPopup #StateReason");
+              SetAgentState(60, StateReason.value);
+              console.log("sub값 : ", StateReason.value);
+            }
             // 팝업 닫기
-            afterProcessPopup.classList.add("hidden");
+            SelectState_popup.classList.add("hidden");
           };
         }
       }
-      
+    }
