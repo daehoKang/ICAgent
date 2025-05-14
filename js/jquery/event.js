@@ -2,6 +2,8 @@ var ipron = ipron;
 var LoginSuccess = "";
 var agentState = "";
 var Connection_id = "";
+var subcode_NotReady = "";
+var subcode_ACW = "";
 
 var loginData = {
   ip1 : "",
@@ -200,6 +202,55 @@ function CBFuncResponse(response) {
         console.log("RES : RETRIECALL 실패");
       }
       break;
+    case ipron.APIResponse.GETSTATE_SUBCODE_RES:
+      if (response.METHOD == ipron.APIResponse.GETSTATE_SUBCODE_RES) {
+        console.log("RES : GETSTATE_SUBCODE 성공");
+
+        agent_state = response.AGENT_STATE;
+        state_subcode = response.EXTENSION_DATA;
+
+        console.log("사유코드 : ", state_subcode);
+        
+        if(agent_state == 30){
+          StateReason = "StateReason_NotReady";
+          selectState = "NotReady";
+        }else{
+          StateReason = "StateReason_ACW";
+          selectState = "ACW";
+        }
+
+        let stateReasonSelect = "";
+        stateReasonSelect = document.getElementById(StateReason);
+        
+          for (key in state_subcode){
+            console.log("현재 키:", key, "값:", state_subcode[key][0]); // 디버깅 로그
+
+            if(agent_state == 30){
+                subcode_NotReady = 1;
+            }else{
+                subcode_ACW = 1;
+            }
+              option = document.createElement("option");
+              option.value = key;
+              option.text = state_subcode[key][0];
+              stateReasonSelect.appendChild(option);
+              console.log(stateReasonSelect);
+              
+          }
+
+        SelectState(selectState);
+
+        stateReasonSelect.addEventListener("change", function () {
+          const selectedKey = stateReasonSelect.value; // 선택된 키
+          const selectedText = stateReasonSelect.options[stateReasonSelect.selectedIndex].text; // 선택된 텍스트
+          console.log("선택된 사유코드:", selectedKey);
+          console.log("선택된 사유 텍스트:", selectedText);
+        });        
+      }
+      else {
+        console.log("RES : GETSTATE_SUBCODE 실패");
+      }
+      break;
     default:
     console.log("알 수 없는 이벤트:", response);
   }
@@ -364,31 +415,39 @@ function CBFuncEvent(event) {
           console.log("EVENT : 후처리상태 변경실패");
         }
         break;
-      case ipron.APIEvent.BANISHMENT:
-        if (event.METHOD == ipron.APIEvent.BANISHMENT) {
-          console.log("EVENT : 강제 로그아웃 성공");
-          if(event.RESULT == 0){
-            var DestAgentID  = event.DEST_AGENT_ID;
+        case ipron.APIEvent.BANISHMENT:
+          if (event.METHOD == ipron.APIEvent.BANISHMENT) {
+            console.log("EVENT : 강제 로그아웃 성공");
+        
+          if (event.RESULT == 0) {
+            var DestAgentID = event.DEST_AGENT_ID;
             var DestDN = event.DEST_DN;
+        
             console.log(InputDN.value);
             console.log(InputuserID.value);
             console.log(DestAgentID);
             console.log(DestDN);
-            if(DestAgentID == InputuserID.value){
-              alert("아이디 : " +  DestAgentID + "님의 로그인으로인해 로그아웃되었습니다.");
-            }else if(DestDN == InputDN.value){
-              alert("내선번호 : " +  DestDN + "님의 로그인으로인해 로그아웃되었습니다.");
-            }else{
-              alert("동일한 아아디/DN 로그인으로인해 로그아웃되었습니다.");
+        
+            if (DestAgentID == InputuserID.value && DestDN == InputDN.value) {
+               alert("동일한 아이디/DN 로그인으로 인해 로그아웃되었습니다.");
+              location.reload(); 
+               return;
+             } else if (DestAgentID == InputuserID.value) {
+              alert("내선번호 : " + DestDN + "님의 로그인으로 인해 로그아웃되었습니다.");
+               location.reload(); 
+               return;
+             } else if (DestDN == InputDN.value) {
+               alert("아이디 : " + DestAgentID + "님의 로그인으로 인해 로그아웃되었습니다.");
+               location.reload(); 
+               return;
+              }
+            } else {
+              console.log("EVENT : 강제 로그아웃 실패");
             }
-            location.reload();
           }
-        }
-        else {
-          console.log("EVENT : 강제 로그아웃 실패");
-        }
           break;
       default:
           console.log("알 수 없는 이벤트:", event);
+          
   }
 }

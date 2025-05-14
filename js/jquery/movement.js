@@ -516,17 +516,24 @@ $(function () {
         if (ConfirmBtn) {
           ConfirmBtn.onclick = function () {        
             if(state == 'NotReady'){
-              const StateReason = document.querySelector("#SelectState_NotReadyPopup #StateReason");
-              SetAgentState(30, StateReason.value);
-              console.log("sub값 : ", StateReason.value);
+              const StateReason = document.querySelector("#SelectState_NotReadyPopup #StateReason_NotReady");
+              SetAgentState(30, StateReason_NotReady.value);
+              console.log("sub값 : ", StateReason_NotReady.value);
             }else{
-              const StateReason = document.querySelector("#SelectState_AcwPopup #StateReason");
-              SetAgentState(60, StateReason.value);
-              console.log("sub값 : ", StateReason.value);
+              const StateReason = document.querySelector("#SelectState_AcwPopup #StateReason_ACW");
+              SetAgentState(60, StateReason_ACW.value);
+              console.log("sub값 : ", StateReason_ACW.value);
             }
             // 팝업 닫기
             SelectState_popup.classList.add("hidden");
           };
         }
       }
+    }
+
+    function GetStateSubcode(agent_state){
+      ipron.GetStateSubcode(
+        InputTenant.value,
+        agent_state
+      );
     }

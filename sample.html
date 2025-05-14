@@ -90,8 +90,10 @@
 
   <div class="controls-state">
     <button type="button" class="state" value= 40 onclick="SetAgentState(this.value)">수신대기</button>
-    <button type="button" class="state" onclick="SelectState('NotReady')">자리비움</button>
-    <button type="button" class="state" onclick="SelectState('ACW')">후처리</button>
+  <!-- <button type="button" class="state" onclick="SelectState('NotReady')">자리비움</button>-->
+   <!-- BtnGetState_SubCode_onclick 휴식사유 코드-->
+    <button type="button" class="state" onclick="GetStateSubcode(30)">자리비움</button>
+    <button type="button" class="state" onclick="GetStateSubcode(60)">후처리</button>
   </div>
 
   <div id="SelectState_AcwPopup" class="popup hidden">
@@ -100,10 +102,10 @@
       <button id="ClosePopupBtn_Acw" class="close-btn">✖</button>
     </div>
     <div class="popup-body">
-      <label for="StateReason">후처리 사유 :</label>
-      <select id="StateReason">
-        <option value=0>기본</option>
-        <option value=1>기타</option>
+      <label for="StateReason_ACW">후처리 사유 :</label>
+      <select id="StateReason_ACW">
+      <!--<option value=0>기본</option>
+        <option value=1>기타</option> -->
       </select>
     </div>
     <div class="popup-footer">
@@ -118,12 +120,12 @@
       <button id="ClosePopupBtn_NotReady" class="close-btn">✖</button>
     </div>
     <div class="popup-body">
-      <label for="StateReason">자리비움 사유 :</label>
-      <select id="StateReason">
-        <option value=0>기본</option>
+      <label for="StateReason_NotReady">자리비움 사유 :</label>
+      <select id="StateReason_NotReady">
+      <!--<option value=0>기본</option>
         <option value=1>교육</option>
         <option value=2>공무</option>
-        <option value=3>식사</option>
+        <option value=3>식사</option>-->
       </select>
     </div>
     <div class="popup-footer">
