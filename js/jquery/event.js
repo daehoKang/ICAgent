@@ -9,6 +9,7 @@ var loginData = {
   ip1 : "",
   ip2 : "",
   port : "",
+  prefix : "",
   userID : "",
   passWord : "",
   DN : "",
@@ -80,7 +81,7 @@ function CBFuncResponse(response) {
               InputDN.value,
               InputuserID.value,
               password,
-              InputTenant.value,
+              tenantValue,
               loginData.state,
               agentsub,
               loginData.extension,
@@ -94,7 +95,7 @@ function CBFuncResponse(response) {
               InputDN.value,
               InputuserID.value,
               password,
-              InputTenant.value,
+              tenantValue,
               loginData.state,
               agentsub,
               loginData.extension,
@@ -208,44 +209,43 @@ function CBFuncResponse(response) {
 
         agent_state = response.AGENT_STATE;
         state_subcode = response.EXTENSION_DATA;
-
+      
         console.log("사유코드 : ", state_subcode);
-        
-        if(agent_state == 30){
-          StateReason = "StateReason_NotReady";
-          selectState = "NotReady";
-        }else{
-          StateReason = "StateReason_ACW";
-          selectState = "ACW";
-        }
+      
+        function populateReasonSelect(stateReasonId, stateSubcode) {
+          const reasonSelect = document.getElementById(stateReasonId);
+          reasonSelect.innerHTML = ""; // 기존 옵션 초기화
+      
+          for (const key in stateSubcode) {
+            const option = document.createElement("option");
+            option.value = key;
+            option.text = stateSubcode[key][0];
+            reasonSelect.appendChild(option);
 
-        let stateReasonSelect = "";
-        stateReasonSelect = document.getElementById(StateReason);
-        
-          for (key in state_subcode){
-            console.log("현재 키:", key, "값:", state_subcode[key][0]); // 디버깅 로그
-
-            if(agent_state == 30){
-                subcode_NotReady = 1;
-            }else{
-                subcode_ACW = 1;
-            }
-              option = document.createElement("option");
-              option.value = key;
-              option.text = state_subcode[key][0];
-              stateReasonSelect.appendChild(option);
-              console.log(stateReasonSelect);
-              
           }
-
+          return reasonSelect;
+        }
+      
+        let ReasonSelect = null;
+      
+        if (agent_state === 30) {
+          ReasonSelect = populateReasonSelect("StateReason_NotReady", state_subcode);
+          subcode_NotReady = 1;
+          selectState = 'NotReady';
+        } else {
+          ReasonSelect = populateReasonSelect("StateReason_ACW", state_subcode);
+          subcode_ACW = 1;
+          selectState = 'ACW';
+        }
+      
         SelectState(selectState);
-
-        stateReasonSelect.addEventListener("change", function () {
-          const selectedKey = stateReasonSelect.value; // 선택된 키
-          const selectedText = stateReasonSelect.options[stateReasonSelect.selectedIndex].text; // 선택된 텍스트
-          console.log("선택된 사유코드:", selectedKey);
-          console.log("선택된 사유 텍스트:", selectedText);
-        });        
+      
+        ReasonSelect.addEventListener("change", function () {
+          const selectedKey = ReasonSelect.value;
+          const selectedText = ReasonSelect.options[ReasonSelect.selectedIndex].text;
+          //console.log("선택된 사유코드:", selectedKey);
+          //console.log("선택된 사유 텍스트:", selectedText);
+        });
       }
       else {
         console.log("RES : GETSTATE_SUBCODE 실패");

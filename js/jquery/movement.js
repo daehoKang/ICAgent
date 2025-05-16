@@ -13,7 +13,88 @@ $(function () {
       }
     });
   });
-    
+  
+  var tenantValue = "";
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const loginButton = document.querySelector(".login-btn");
+    const userIDField = document.getElementById("InputuserID");
+    const passwordField = document.getElementById("Inputpassword");
+    const DNField = document.getElementById("InputDN");
+  
+    // cfg 파일 읽기
+    function loadConfig() {
+      fetch("sample.cfg")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Config 파일을 불러올 수 없습니다.");
+          }
+          return response.text();
+        })
+        .then((data) => {
+          const config = parseConfig(data);
+          applyConfig(config);
+          checkInputs(); // 초기 상태 확인
+        })
+        .catch((error) => {
+          console.error("Config 파일 로드 에러:", error);
+        });
+    }
+  
+    // cfg 파일 파싱
+    function parseConfig(data) {
+      const config = {};
+      const lines = data.split("\n");
+      lines.forEach((line) => {
+        const [key, value] = line.split("=");
+        if (key && value) {
+          config[key.trim()] = value.trim();
+        }
+      });
+      return config;
+    }
+  
+    // 입력 필드에 값 적용
+    function applyConfig(config) {
+      if (config.IP1) IP1Value = config.IP1;
+      if (config.IP2) IP2Value = config.IP2;
+      if (config.port) PortValue = config.port;
+      if (config.prefix) prefixValue = config.prefix;
+      if (config.tenant) tenantValue = config.tenant;
+    }
+
+
+  
+    // 입력 필드 상태 확인 함수
+    function checkInputs() {
+      const allFilled =
+        userIDField.value.trim() !== "" &&
+        passwordField.value.trim() !== "" &&
+        DNField.value.trim() !== "";
+      loginButton.disabled = !allFilled; // 모든 필드가 채워지지 않으면 버튼 비활성화
+    }
+  
+    // 입력 필드에 이벤트 리스너 추가
+    [userIDField, passwordField, DNField].forEach((input) => {
+      input.addEventListener("input", checkInputs);
+    });
+  
+    // cfg 파일 로드
+    loadConfig();
+  
+    // 로그인 버튼 클릭 이벤트
+    loginButton.addEventListener("click", function () {
+      const loginData = {
+        userID: userIDField.value,
+        password: passwordField.value,
+        DN: DNField.value,
+        tenant: tenantValue, // 테넌트 값 사용
+      };
+      console.log("로그인 데이터:", loginData);
+      // 여기서 서버로 로그인 요청을 보냅니다.
+    });
+  });
+  
     // Enter 키로 로그인 버튼 동작
     document.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -71,8 +152,9 @@ $(function () {
       function BtnSave_onclick() {
         // 입력값 가져오기
         loginData.ip1 = document.getElementById("InputIp1").value.trim();
-        loginData.ip2 = document.getElementById("InputIp2").value.trim();
+        loginData.ip2 = document.getElementById("InputIp1").value.trim();
         loginData.port = document.getElementById("InputPort").value.trim();
+        loginData.prefix = document.getElementById("InputPrefix").value.trim();
     
         // 팝업 숨기기
         document.getElementById("settingsPopup").classList.remove('active');
@@ -90,7 +172,7 @@ $(function () {
         if (rememberInfo) {
           const userID = document.getElementById("InputuserID").value;
           const dn = document.getElementById("InputDN").value.trim();
-          const tenant = document.getElementById("InputTenant").value.trim();
+          const tenant = tenantValue;
           localStorage.setItem("saveID", userID);
           localStorage.setItem("saveDN", dn);
           localStorage.setItem("saveTenant", tenant);
@@ -117,24 +199,24 @@ $(function () {
           document.getElementById("InputDN").value = saveDN;
         }
         if(saveTenant){
-          document.getElementById("InputTenant").value = saveTenant;
+          tenantValue = saveTenant;
         }
         OpenServer();
       }
 
       function OpenServer(){
         // WebSocket URL 생성
-        var p1 = GetProtocol() + '://' + InputIp1.value + ':' + InputPort.value + '/wsapi';
-        var p2 = GetProtocol() + '://' + InputIp2.value + ':' + InputPort.value + '/wsapi';
+        var p1 = GetProtocol() + '://' + IP1Value + ':' + PortValue + '/wsapi';
+        //var p2 = GetProtocol() + '://' + InputIp2.value + ':' + InputPort.value + '/wsapi';
     
-        if (InputIp1 != '') {
+        if (IP1Value != '') {
             console.log(p1);
         } else {
             console.log(p2);
         }
     
         // ipron 초기화
-        ipron.init(p1, p2);
+        ipron.init(p1, p1);
     
         // OpenServer 호출
         var ret = ipron.OpenServer(CBFuncEvent, CBFuncResponse);
@@ -149,9 +231,9 @@ $(function () {
     
       function CallRegister() {
           console.log("DN:", InputDN.value);
-          console.log("Tenant:", InputTenant.value);
+          console.log("Tenant:", tenantValue);
     
-        ipron.Register(InputDN.value, InputTenant.value);
+        ipron.Register(InputDN.value, tenantValue);
             
         }
     
@@ -167,7 +249,7 @@ $(function () {
           InputDN.value,
           InputuserID.value,
           Inputpassword.value,
-          InputTenant.value,
+          tenantValue,
           loginData.state,
           agentsub,
           loginData.extension,
@@ -190,7 +272,7 @@ $(function () {
         ipron.AgentLogout(
           InputDN.value,
           InputuserID.value,
-          InputTenant.value,
+          tenantValue,
           loginData.extension,
         );
       }
@@ -198,7 +280,7 @@ $(function () {
       function Unregister() {
         ipron.Unregister(
           InputDN.value,
-          InputTenant.value
+          tenantValue
         );
       }
 
@@ -245,7 +327,13 @@ $(function () {
       function BtnMakeCall_onclick() {
     
         document.getElementById("InputDnis").value;
-    
+
+        if(loginData.prefix != ""){
+          if(InputDnis.value > 4){
+            InputDnis.value = loginData.prefix + InputDnis.value;
+          }
+        }
+
         ipron.MakeCall(
           InputDN.value,
           InputDnis.value,
@@ -329,9 +417,9 @@ $(function () {
     
       function SetAgentState(value, state_sub) {
         agentState = parseInt(value);
-    
+        console.log("확인 : ", state_sub);
         const InputuserID = document.getElementById("InputuserID");
-        loginData.tenant = document.getElementById("InputTenant").value.trim(); // Tenant 값 설정
+        loginData.tenant = tenantValue; // Tenant 값 설정
     
         if(state_sub == 0){
           ipron.SetAgentState(
@@ -467,14 +555,22 @@ $(function () {
           default:
             stateText = "알 수 없는 상태";
         }
-    
+        
+        const existingLogs = callList.querySelectorAll(".call-item");
+        existingLogs.forEach((log) => {
+        const stateSpan = log.querySelector("span:first-child"); // 상태 텍스트 부분
+        if (stateSpan) {
+            stateSpan.style.color = "gray"; // 상태 텍스트만 옅게 설정
+        }
+      });
+
         // 로그 항목 생성
         const logItem = document.createElement("div");
         logItem.classList.add("call-item");
         logItem.innerHTML = `
-          <span>📄 ${stateText}</span>
-          <span>${currentTime}</span>
-        `;
+        <span style="color: #4a90e2;">📄 ${stateText}</span> <!-- 상태 텍스트는 기본 색상 유지 -->
+        <span>${currentTime}</span> <!-- 시간은 변경하지 않음 -->
+    `;
     
         // 로그 추가
         callList.prepend(logItem); // 최신 로그가 위로 오도록 추가
@@ -517,12 +613,10 @@ $(function () {
           ConfirmBtn.onclick = function () {        
             if(state == 'NotReady'){
               const StateReason = document.querySelector("#SelectState_NotReadyPopup #StateReason_NotReady");
-              SetAgentState(30, StateReason_NotReady.value);
-              console.log("sub값 : ", StateReason_NotReady.value);
+              SetAgentState(30, Number(StateReason_NotReady.value));
             }else{
               const StateReason = document.querySelector("#SelectState_AcwPopup #StateReason_ACW");
-              SetAgentState(60, StateReason_ACW.value);
-              console.log("sub값 : ", StateReason_ACW.value);
+              SetAgentState(60, Number(StateReason_ACW.value));
             }
             // 팝업 닫기
             SelectState_popup.classList.add("hidden");
@@ -533,7 +627,7 @@ $(function () {
 
     function GetStateSubcode(agent_state){
       ipron.GetStateSubcode(
-        InputTenant.value,
+        tenantValue,
         agent_state
       );
     }

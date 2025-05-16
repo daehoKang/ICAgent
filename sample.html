@@ -15,18 +15,18 @@
   <div class="login-container">
     <!-- ⚙️ 설정 아이콘 -->
     <div class="settings-icon" id="settingsPre">
-      <div class="gear"></div>
+     <!-- <div class="gear"></div>-->
     </div>
 
     <!-- 환경설정 팝업 -->
-    <div class="settings-popup" id="settingsPopup">
+  <!--<div class="settings-popup" id="settingsPopup">
       <h4>⚙️ 환경설정 ⚙️</h4>
       <div class="popup-grid">
         <div class="form-item">
           <label>Server IP1</label>
           <input type="text" id="InputIp1" placeholder="IP1" value="100.100.107.151"/>
         </div>
-        <div class="form-item">
+      <div class="form-item">
           <label>Server IP2</label>
           <input type="text" id="InputIp2" placeholder="IP2" value="100.100.107.151"/>
         </div>
@@ -43,7 +43,7 @@
         <button class="btn save" value="BtnSave" onclick="return BtnSave_onclick()">저장</button>
         <button class="btn close" onclick="settingsPopup.classList.remove('active')">닫기</button>
       </div>
-    </div>
+    </div>-->
 
     <!-- 로고 -->
     <div class="login-logo">
@@ -61,9 +61,9 @@
       <div class="form-group">
         <input type="text" id="InputDN" placeholder="내선번호" required />
       </div>
-      <div class="form-group">
+    <!--<div class="form-group">
         <input type="text" id="InputTenant" placeholder="테넌트" required />
-      </div>
+      </div>-->
       <div class="form-group remember-Info">
         <input type="checkbox" id="rememberInfo" />
         <label for="rememberInfo">로그인 정보 저장</label>
@@ -155,7 +155,6 @@
   <div id="callPopup" class="popup hidden">
     <div class="popup-header">
       <h3>📞 전화 알림</h3>
-      <button id="closePopupBtn" class="close-btn">✖</button>
     </div>
     <div class="popup-body">
       <p><strong>전화번호:</strong> <span id="popupPhoneNumber">1234</span></p>
@@ -197,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("InputDN").value = saveDN;
   }
   if (saveTenant) {
-    document.getElementById("InputTenant").value = saveTenant;
+    tenantValue = saveTenant;
   }
 
   // "로그인 정보 저장" 체크박스 상태 유지
@@ -210,22 +209,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("InputuserID"),
     document.getElementById("Inputpassword"),
     document.getElementById("InputDN"),
-    document.getElementById("InputTenant"),
   ];
 
-  // 입력 필드 상태 확인 함수
-  function checkInputs() {
-    const allFilled = inputFields.every((input) => input.value.trim() !== "");
-    loginButton.disabled = !allFilled; // 모든 필드가 채워지지 않으면 버튼 비활성화
-  }
 
-  // 입력 필드에 이벤트 리스너 추가
-  inputFields.forEach((input) => {
-    input.addEventListener("input", checkInputs);
-  });
-
-  // 초기 상태 확인
-  checkInputs();
 });
 </script>
 </body>
