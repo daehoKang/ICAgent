@@ -143,11 +143,11 @@ function CBFuncResponse(response) {
       break;
       case ipron.APIResponse.CLOSESERVER_RES:
         if (response.METHOD == ipron.APIResponse.CLOSESERVER_RES) {
-          console.log("EVENT : CloseServer 성공");
+          console.log("RES : CloseServer 성공");
           LogoutSuccess();
         }
         else {
-          console.log("EVENT : CloseServer 실패");
+          console.log("RES : CloseServer 실패");
         }
           break;
     case ipron.APIResponse.MAKECALL_RES:
@@ -196,7 +196,7 @@ function CBFuncResponse(response) {
       }
       break;
     case ipron.APIResponse.RETRIEVECALL_RES:
-      if (response.METHOD == ipron.APIResponse.RETRIECALL_RES) {
+      if (response.METHOD == ipron.APIResponse.RETRIEVECALL_RES) {
         console.log("RES : RETRIECALL 성공");
       }
       else {
@@ -324,10 +324,12 @@ function CBFuncEvent(event) {
           console.log("EVENT : DIALING 성공");
           document.querySelector(".controls_2").classList.remove("hidden") //통화종료 버튼 활성화
           Connection_id = event.CONNECTION_ID;
-              state = 52;
-              SetAgentState(state);
-              StateControl(true);
-              CallControl(false);
+            state = 52;
+            SetAgentState(state);
+            StateControl(true);
+            CallControl("ClearCall", false);
+            CallControl("HoldCall", false);
+            CallControl("RetrieveCall", false);
         }
         else {
           console.log("EVENT : DIALING 실패");
@@ -342,7 +344,9 @@ function CBFuncEvent(event) {
           SetAgentState(state);
           StateControl(true);
           MakeCallControl(true);
-          CallControl(false);
+          CallControl("ClearCall", false);
+          CallControl("HoldCall", false);
+          CallControl("RetrieveCall", true);
           toggleDialer(false);
         }
         else {
@@ -359,7 +363,9 @@ function CBFuncEvent(event) {
           SetAgentState(state);
           StateControl(false);
           MakeCallControl(false);
-          CallControl(true);
+          CallControl("ClearCall", true);
+          CallControl("HoldCall", true);
+          CallControl("RetrieveCall", true);
           toggleDialer(true);
 
           if (callPopup) {
@@ -392,7 +398,9 @@ function CBFuncEvent(event) {
           console.log("EVENT : 통화 대기 성공");
           value = 58; // 58 : 통화대기
           addLog(value);
-          CallControl(false);
+          CallControl("ClearCall", false);
+          CallControl("HoldCall", true);
+          CallControl("RetrieveCall", false);
         }
         else {
           console.log("EVENT : 통화 대기 실패");
@@ -403,6 +411,9 @@ function CBFuncEvent(event) {
           console.log("EVENT : 통화 대기 해제 성공");
           value = 59; // 59 : 통화대기
           addLog(value);
+          CallControl("ClearCall", false);
+          CallControl("HoldCall", false);
+          CallControl("RetrieveCall", true);
         }
         else {
           console.log("EVENT : 통화 대기 해제 실패");

@@ -180,12 +180,12 @@ body {
 }
 
 .settings-popup .popup-buttons .btn.close {
-  background-color: #e0e0e0; /* 회색 */
-  color: #555;
+  background-color: #4a90e2; /* 회색 */
+  color: white;
 }
 
 .settings-popup .popup-buttons .btn.close:hover {
-  background-color: #cfcfcf; /* 더 어두운 회색 */
+  background-color: #3b79cb; /* 더 어두운 회색 */
 }
 
 /* 팝업 그리드 */
@@ -547,6 +547,7 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
+  width: 90px;
 }
 
 .callmain-container .controls button:hover {
@@ -1119,4 +1120,125 @@ body {
 
 .remember-Info label {
   cursor: pointer;
+}
+
+input[readOnly]{
+  background-color: #f0f0f0; /* 배경색을 약간 어둡게 설정 */
+  color: #333; /* 텍스트 색상을 어둡게 설정 */
+  border: 1px solid #ccc; /* 테두리 색상 */
+  cursor: not-allowed; /* 커서를 비활성화된 상태로 표시 */
+}
+
+#transferPopup .popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #ddd; /* 연한 테두리 */
+  border-radius: 12px; /* 둥근 모서리 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  width: 350px; /* 팝업 너비 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+  display: none; /* 기본적으로 숨김 */
+  font-family: 'Roboto', Arial, sans-serif; /* 세련된 폰트 */
+}
+
+#transferPopup .popup.active {
+  display: block; /* 활성화 시 표시 */
+}
+
+#transferPopup .popup-header {
+  background-color: #4a90e2; /* 파란색 헤더 */
+  color: #ffffff; /* 흰색 텍스트 */
+  padding: 15px; /* 내부 여백 */
+  border-top-left-radius: 12px; /* 상단 좌측 모서리 둥글게 */
+  border-top-right-radius: 12px; /* 상단 우측 모서리 둥글게 */
+  display: flex; /* 플렉스 박스 */
+  justify-content: space-between; /* 좌우 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+}
+
+#transferPopup .popup-header h3 {
+  margin: 0;
+  font-size: 1.2rem; /* 제목 크기 */
+  font-weight: bold;
+}
+
+#transferPopup .popup-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #ffffff; /* 닫기 버튼 흰색 */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+#transferPopup .popup-header .close-btn:hover {
+  color: #d1d5db; /* 닫기 버튼 호버 시 연한 회색 */
+}
+
+#transferPopup .popup-body {
+  padding: 20px; /* 내부 여백 */
+  font-size: 1rem; /* 텍스트 크기 */
+  color: #333; /* 텍스트 색상 */
+}
+
+#transferPopup .popup-body label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold; /* 글씨를 굵게 */
+  color: #666; /* 회색 */
+}
+
+#transferPopup .popup-body input {
+  width: 100%; /* 입력 필드 너비 */
+  padding: 12px; /* 내부 여백 */
+  font-size: 1rem; /* 텍스트 크기 */
+  border: 1px solid #ddd; /* 테두리 */
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #f9f9f9; /* 연한 회색 배경 */
+  color: #333; /* 텍스트 색상 */
+  transition: border-color 0.3s ease;
+}
+
+#transferPopup .popup-body input:focus {
+  border-color: #4a90e2; /* 포커스 시 파란색 테두리 */
+  outline: none;
+}
+
+#transferPopup .popup-footer {
+  padding: 15px; /* 내부 여백 */
+  display: flex; /* 플렉스 박스 */
+  gap: 10px; /* 버튼 간 간격 */
+  background-color: #f9f9f9; /* 연한 회색 배경 */
+  border-bottom-left-radius: 12px; /* 하단 좌측 모서리 둥글게 */
+  border-bottom-right-radius: 12px; /* 하단 우측 모서리 둥글게 */
+}
+
+#transferPopup .popup-footer .btn {
+  padding: 10px 20px; /* 버튼 크기 */
+  border: none;
+  border-radius: 8px; /* 둥근 모서리 */
+  font-size: 1rem; /* 텍스트 크기 */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#transferPopup .popup-footer .btn.confirm {
+  background-color: #4a90e2; /* 파란색 배경 */
+  color: white; /* 흰색 텍스트 */
+}
+
+#transferPopup .popup-footer .btn.confirm:hover {
+  background-color: #3b79cb; /* 더 어두운 파란색 */
+}
+
+#transferPopup .popup-footer .btn.cancel {
+  background-color: #e0e0e0; /* 연한 회색 배경 */
+  color: #555; /* 회색 텍스트 */
+}
+
+#transferPopup .popup-footer .btn.cancel:hover {
+  background-color: #cfcfcf; /* 더 어두운 회색 */
 }

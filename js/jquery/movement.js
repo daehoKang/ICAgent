@@ -1,3 +1,12 @@
+var tenantValue = "";
+var IP1Value = "";
+var IP2Value = "";
+var PortValue = "";
+var PrefixValue = "";
+var passwordUse = "";
+var CallSender = "";
+
+
 $(function () {
     $("#settingsPre").click(function () {
       $('#settingsPopup').toggleClass('active');
@@ -14,7 +23,14 @@ $(function () {
     });
   });
   
-  var tenantValue = "";
+  window.addEventListener("beforeunload", function(){
+    if(agentState = 50){
+        ClearCall();
+        Unregister();
+        CloseServer();
+      }
+  });
+
 
   document.addEventListener("DOMContentLoaded", function () {
     const loginButton = document.querySelector(".login-btn");
@@ -56,22 +72,65 @@ $(function () {
   
     // 입력 필드에 값 적용
     function applyConfig(config) {
-      if (config.IP1) IP1Value = config.IP1;
-      if (config.IP2) IP2Value = config.IP2;
-      if (config.port) PortValue = config.port;
-      if (config.prefix) prefixValue = config.prefix;
-      if (config.tenant) tenantValue = config.tenant;
+      const ip1Field = document.getElementById("InputIp1");
+      const ip2Field = document.getElementById("InputIp2");
+      const portField = document.getElementById("InputPort");
+      const prefixField = document.getElementById("InputPrefix");
+      const tenantField = document.getElementById("InputTenant");
+      
+      if (config.IP1) {
+        IP1Value = config.IP1;
+        ip1Field.value = config.IP1;
+        ip1Field.readOnly = true;
+      }
+      if (config.IP2) {
+        IP2Value = config.IP2;
+        ip2Field.value = config.IP2;
+        ip2Field.readOnly = true;
+      }
+      if (config.port) {
+        PortValue = config.port;
+        portField.value = config.port;
+        portField.readOnly = true;
+      }
+      if (config.prefix) {
+        PrefixValue = config.prefix;
+        prefixField.value = config.prefix;
+        prefixField.readOnly = true;
+      }
+
+      if (config.tenant){
+        tenantValue = config.tenant;
+        tenantField.value = config.tenant;
+        tenantField.readOnly = true;
+
+      }
+
+      if (config.password_use){
+        passwordUse = config.password_use;
+          if(passwordUse == 'N'){
+            passwordField.style.display = "none"; // 비밀번호 필드 숨기기
+          }else{
+            passwordField.style.display = ""; // 비밀번호 필드 보이기
+          }
+      }
+
     }
 
 
   
     // 입력 필드 상태 확인 함수
     function checkInputs() {
-      const allFilled =
+      if(passwordUse ==  'Y'){
+        const allFilled =
         userIDField.value.trim() !== "" &&
         passwordField.value.trim() !== "" &&
-        DNField.value.trim() !== "";
+        DNField.value.trim() !== ""; 
       loginButton.disabled = !allFilled; // 모든 필드가 채워지지 않으면 버튼 비활성화
+      }
+      else{
+      loginButton.disabled = false;
+    }
     }
   
     // 입력 필드에 이벤트 리스너 추가
@@ -114,12 +173,11 @@ $(function () {
         });
       }
 
-      function CallControl(disable){
-        const buttons = document.querySelectorAll(".controls button");
-        console.log("확인 : ", disable);
-        buttons.forEach(function(button) {
+      function CallControl(buttonID, disable){
+        const button = document.getElementById(buttonID);
+        if(button){
           button.disabled = disable;
-        });
+        }
       }
 
       function MakeCallControl(disable){
@@ -134,6 +192,15 @@ $(function () {
         const dialer = document.querySelector(".dialer");
         if (dialer) {
           dialer.classList.toggle("hidden", !show); // show가 false면 hidden 클래스 추가
+
+          const transferElements = dialer.querySelectorAll(".Transfer");
+          transferElements.forEach((element) => {
+            if (!show) {
+                element.style.display = "block"; // hidden 상태에서도 표시
+            } else {
+                element.style.display = ""; // 기본 상태로 복원
+            }
+        });
         }
       }
 
@@ -155,6 +222,7 @@ $(function () {
         loginData.ip2 = document.getElementById("InputIp1").value.trim();
         loginData.port = document.getElementById("InputPort").value.trim();
         loginData.prefix = document.getElementById("InputPrefix").value.trim();
+        console.log("확인 : ", loginData.prefix);
     
         // 팝업 숨기기
         document.getElementById("settingsPopup").classList.remove('active');
@@ -207,7 +275,7 @@ $(function () {
       function OpenServer(){
         // WebSocket URL 생성
         var p1 = GetProtocol() + '://' + IP1Value + ':' + PortValue + '/wsapi';
-        //var p2 = GetProtocol() + '://' + InputIp2.value + ':' + InputPort.value + '/wsapi';
+        var p2 = GetProtocol() + '://' + InputIp2.value + ':' + InputPort.value + '/wsapi';
     
         if (IP1Value != '') {
             console.log(p1);
@@ -325,14 +393,17 @@ $(function () {
       }
     
       function BtnMakeCall_onclick() {
-    
         document.getElementById("InputDnis").value;
+        
+        const MobileNumber = /^010\d{8}$/.test(InputDnis.value); // 휴대전화번호
+        const LandlineNumber = /^\d{2,3}\d{7,8}$/.test(InputDnis.value); // 국선 전화번호
 
-        if(loginData.prefix != ""){
-          if(InputDnis.value > 4){
-            InputDnis.value = loginData.prefix + InputDnis.value;
-          }
+        if (PrefixValue !== "" && (MobileNumber || LandlineNumber)) {
+          InputDnis.value = PrefixValue + InputDnis.value;
+          console.log("Dnis: " , InputDnis.value);
         }
+
+        CallSender = 1;
 
         ipron.MakeCall(
           InputDN.value,
@@ -447,18 +518,28 @@ $(function () {
 
       }
     
+      let PopTimerInterval;
+
       function showCallPopup(ANI) {
+
         const popup = document.getElementById("callPopup");
         const phoneNumberElement = document.getElementById("popupPhoneNumber");
         const timerElement = document.getElementById("popupTimer");
-    
-    
+
+        const formattedANI = formatPhoneNumber(ANI);
+
         // 전화번호 설정
-        phoneNumberElement.textContent = ANI;
+        phoneNumberElement.textContent = formattedANI;
+        timerElement.textContent = "00:00:00";
+
+        if (PopTimerInterval) {
+          clearInterval(PopTimerInterval); // 기존 타이머를 중지
+          PopTimerInterval = null; // 타이머 변수를 초기화
+      }
     
         // 타이머 초기화
         let seconds = 0;
-        const timerInterval = setInterval(() => {
+        PopTimerInterval = setInterval(() => {
           seconds++;
           const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
           const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
@@ -471,20 +552,33 @@ $(function () {
     
         // 버튼 동작 정의
         document.getElementById("pop_AnswerCall").onclick = () => {
-          clearInterval(timerInterval);
+          clearInterval(PopTimerInterval);
           popup.classList.add("hidden");
           AnswerCall();
         };
     
         document.getElementById("pop_ClearCall").onclick = () => {
           console.log("전화 종료");
-          clearInterval(timerInterval);
+          clearInterval(PopTimerInterval);
           popup.classList.add("hidden");
           ClearCall();
         };
     
       }
     
+      function formatPhoneNumber(phoneNumber) {
+        if (/^010\d{8}$/.test(phoneNumber)) {
+          return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+        }
+
+        if (/^\d{2,3}\d{7,8}$/.test(phoneNumber)) {
+          return phoneNumber.replace(/(\d{2,3})(\d{3,4})(\d{4})/, "$1-$2-$3");
+        }
+
+        return phoneNumber;
+      }
+
+
       function AnswerCall() {
         ipron.AnswerCall(
           InputDN.value,
@@ -630,4 +724,25 @@ $(function () {
         tenantValue,
         agent_state
       );
+    }
+
+    function TransferPopup(show = true) {
+      const transferPopup = document.getElementById("transferPopup");
+      if (transferPopup) {
+        if (show) {
+          transferPopup.classList.remove("hidden"); // 팝업 표시
+        } else {
+          transferPopup.classList.add("hidden"); // 팝업 숨김
+        }
+      }
+      if (show == true){
+        HoldCall();
+      }else{
+        RetrieveCall();
+      }
+      
+    }
+
+    function SingleStepTransfer(){
+
     }

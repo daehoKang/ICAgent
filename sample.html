@@ -15,11 +15,11 @@
   <div class="login-container">
     <!-- ⚙️ 설정 아이콘 -->
     <div class="settings-icon" id="settingsPre">
-     <!-- <div class="gear"></div>-->
+     <div class="gear"></div>
     </div>
 
     <!-- 환경설정 팝업 -->
-  <!--<div class="settings-popup" id="settingsPopup">
+  <div class="settings-popup" id="settingsPopup">
       <h4>⚙️ 환경설정 ⚙️</h4>
       <div class="popup-grid">
         <div class="form-item">
@@ -34,16 +34,20 @@
           <label>Port</label>
           <input type="text" id="InputPort" placeholder="PORT" value="9205"/>
         </div>
+      <!--<div class="form-item">
+          <label>Tenant</label>
+          <input type="text" id="InputTenant" placeholder="Tenant" />
+        </div>-->
         <div class="form-item">
           <label>Prefix</label>
           <input type="text" id="InputPrefix" placeholder="Prefix" />
         </div>
       </div>
       <div class="popup-buttons">
-        <button class="btn save" value="BtnSave" onclick="return BtnSave_onclick()">저장</button>
+      <!--<button class="btn save" value="BtnSave" onclick="return BtnSave_onclick()">저장</button> -->
         <button class="btn close" onclick="settingsPopup.classList.remove('active')">닫기</button>
       </div>
-    </div>-->
+    </div>
 
     <!-- 로고 -->
     <div class="login-logo">
@@ -61,9 +65,9 @@
       <div class="form-group">
         <input type="text" id="InputDN" placeholder="내선번호" required />
       </div>
-    <!--<div class="form-group">
+    <div class="form-group">
         <input type="text" id="InputTenant" placeholder="테넌트" required />
-      </div>-->
+      </div>
       <div class="form-group remember-Info">
         <input type="checkbox" id="rememberInfo" />
         <label for="rememberInfo">로그인 정보 저장</label>
@@ -84,7 +88,7 @@
   </div>
 
   <div class="dialer">
-    <input type="text" id="InputDnis"placeholder="전화번호 입력">
+    <input type="text" id="InputDnis" placeholder="전화번호 입력">
     <button type="button" class="MakeCall-btn" onclick="BtnMakeCall_onclick()">전화 걸기</button>
   </div>
 
@@ -138,6 +142,7 @@
     자리비움 (00:03:32)
   </div>
 
+
   <!--<div class="ClearLog-container">
     <div class="ClearLog">
       <button type="button" class="clear-logs-btn" onclick="ClearLogs()">지우기</button> 
@@ -146,8 +151,9 @@
   </div>
   <div class="controls hidden">
     <button type="button "class="ClearCall" id="ClearCall" disabled onclick="ClearCall()">통화종료</button>
-    <button type="button "class="HoldCall" disabled onclick="HoldCall()">보류</button>
-    <button type="button "class="RetrieveCall" disabled onclick="RetrieveCall()">보류해제</button>
+    <button type="button "class="HoldCall" id ="HoldCall" disabled onclick="HoldCall()">보류</button>
+    <button type="button "class="RetrieveCall" id= "RetrieveCall" disabled onclick="RetrieveCall()">보류해제</button>
+    <button type="button "class="SingleStepTransfer" id= "SingleStepTransfer"  onclick="TransferPopup()">호전환</button>
   </div>
   <div class="controls_2 hidden">
     <button type="button" class="ClearCall_2" id="ClearCall2" onclick="ClearCall()">통화종료</button>
@@ -182,6 +188,22 @@
   </div>
 </div>
 
+
+<div id="transferPopup" class="popup hidden">
+  <div class="popup-header">
+    <h3>호전환</h3>
+  </div>
+  <div class="popup-body">
+    <label for="transferNumber">호전환 번호:</label>
+    <input type="text" id="transferNumber" placeholder="번호 입력" />
+  </div>
+  <div class="popup-footer">
+    <button type="button" class="btn confirm" onclick="SingleStepTransfer()">확인</button>
+    <button type="button" class="btn cancel" onclick="TransferPopup(false)">취소</button>
+  </div>
+</div>
+
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
