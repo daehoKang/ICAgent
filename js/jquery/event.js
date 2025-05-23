@@ -247,10 +247,16 @@ function CBFuncResponse(response) {
           //console.log("선택된 사유 텍스트:", selectedText);
         });
       }
-      else {
-        console.log("RES : GETSTATE_SUBCODE 실패");
-      }
+
+      case ipron.APIResponse.SINGLESTEP_TRANSFER_RES:
+        if (response.METHOD == ipron.APIResponse.SINGLESTEP_TRANSFER_RES) {
+          console.log("RES : SINGLESTEP_TRANSFER 성공");
+          TransferPopup(false);
+        } else{
+          console.log("RES : SINGLESTEP_TRANSFER 실패");
+        }
       break;
+      
     default:
     console.log("알 수 없는 이벤트:", response);
   }

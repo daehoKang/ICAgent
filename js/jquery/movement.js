@@ -744,5 +744,32 @@ $(function () {
     }
 
     function SingleStepTransfer(){
+      
+      const TransferDN = document.getElementById("transferNumber");
 
+      MakeCall.MEDIA_TYPE = 0;
+      MakeCall.USEPREVAGENT = 1;
+      console.log("media_type : ", MakeCall.MEDIA_TYPE);
+      console.log("usePrevAgent : ", MakeCall.USEPREVAGENT);
+      ipron.SinglestepTransfer(
+        InputDN.value,
+        Connection_id,
+        TransferDN.value,
+        MakeCall.OB_CALLING_DN,
+        MakeCall.SKILL_LEVEL,
+        MakeCall.PRIORIY,
+        MakeCall.RELATION_AGENT_DN,
+        MakeCall.RELATION_AGENT_ID,
+        MakeCall.RELATION_METHOD,
+        MakeCall.ROUTE_METHOD,
+        MakeCall.ROUTE_SKILL_ID,
+        MakeCall.ROUTE_GROUP_ID,
+        MakeCall.EXTENSION_DATA,
+        MakeCall.MEDIA_TYPE,
+        MakeCall.USEPREVAGENT,
+        MakeCall.USEDESIGNATEDAGENT,
+        MakeCall.RELATION_TIMEOUT,
+        MakeCall.HOP
+      );
+      
     }
